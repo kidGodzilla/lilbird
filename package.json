@@ -1,0 +1,23 @@
+{
+  "name": "lilbird",
+  "version": "0.2.7",
+  "description": "A TinyBird Event API helper library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kidGodzilla/lilbird.git"
+  },
+  "keywords": [
+    "TinyBird",
+    "analytics"
+  ],
+  "author": "James Futhey (https://www.jamesfuthey.com/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kidGodzilla/lilbird/issues"
+  },
+  "homepage": "https://github.com/kidGodzilla/lilbird#readme"
+}
