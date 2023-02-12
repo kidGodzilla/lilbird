@@ -47,7 +47,7 @@ function ___getSessionID() {
     return null;
 }
 
-const ___lilbird = {
+var ___lilbird = {
     user: {},
     configuration: {},
     config: function (conf) {
@@ -80,7 +80,7 @@ const ___lilbird = {
 
         // Normalize all types in body for TinyBird type safety
         // All numbers should become strings
-        for (const k in body) {
+        for (var k in body) {
             if (typeof body[k] === 'number') body[k] = (body[k]).toString();
         }
 
