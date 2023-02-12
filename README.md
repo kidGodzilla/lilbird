@@ -3,6 +3,8 @@ TinyBird Event API helper library.
 
 Adds routine Analytics.js style tracking to TinyBird with as little setup as possible.
 
+![Lilbird](bird.png?raw=true "Lilbird, stable diffusion")
+
 ## TinyBird Signup & Setup
 
 1. Head to https://www.tinybird.co/
