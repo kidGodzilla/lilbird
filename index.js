@@ -91,7 +91,9 @@ var ___lilbird = {
                 body: JSON.stringify(body),
                 headers: { Authorization: 'Bearer ' + this.configuration.WRITE_KEY }
             }
-        ).then(res => res.json()).then(data => { if (this.configuration.DEBUG) console.log('Tinybird Event response', data) });
+        )
+            .then(res => res.json()).then(data => { if (this.configuration.DEBUG) console.log('Tinybird Event response', data) })
+            .catch(e => { if (this.configuration.DEBUG) console.log(e) });
     },
     identify: function (uid, data) {
         if (typeof data === 'object') {
