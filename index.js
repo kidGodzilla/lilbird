@@ -84,6 +84,13 @@ var ___lilbird = {
             if (typeof body[k] === 'number') body[k] = (body[k]).toString();
         }
 
+        // User-defined body transformation (temporary)
+        if (this.configuration.BODY_TRANSFORMATION && typeof this.configuration.BODY_TRANSFORMATION === 'function') {
+            var body_transformed = this.configuration.BODY_TRANSFORMATION(body, event_name);
+            if (body_transformed && typeof body_transformed === 'object') body = body_transformed;
+            else console.warn('No event object returned from BODY_TRANSFORMATION');
+        }
+
         if (this.configuration.DEBUG) console.log('TinyBird Event:', event_name, body);
 
         fetch(`${ this.configuration.BASE_URL || 'https://api.tinybird.co/v0/events' }?name=${ event_name }`, {

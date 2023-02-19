@@ -110,3 +110,26 @@ You can also track an event without a payload.
 LILBIRD.track('login');
 ```
 
+## Body Transformation
+
+TinyBird has strict type checking and enforcement, so you may need to do data transformation on events before they're sent, to prevent validation errors.
+
+You can do that with a `BODY_TRANSFORMATION` function, which modifies the body before TinyBird ingestion.
+
+**Note:** this is a synchronous function, which must return the body once it is modified.
+
+**Example:** 
+
+```js
+LILBIRD.init({
+   WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY',
+   BODY_TRANSFORMATION: function(body, event_name) {
+       if (event_name === 'pageview') {
+           // Do something
+           if (typeof body.ts === 'string') body.ts = parseInt(body.ts);
+       }
+       
+       return body;
+   }
+});
+```
