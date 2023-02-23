@@ -53,7 +53,7 @@ function __legacy_generateUUID() {
 }
 
 function ___uuidv4() {
-    if (!window.crypto) return __legacy_generateUUID();
+    if (!window.crypto || !window.crypto.getRandomValues) return __legacy_generateUUID();
 
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
         (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
