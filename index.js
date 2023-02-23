@@ -110,6 +110,8 @@ var ___lilbird = {
         if (this.configuration.DEBUG) console.log('TinyBird Configuration:', this.configuration);
     },
     track: function (event_name, body) {
+        var _debug = this.configuration.DEBUG;
+
         // Checks
         if (typeof event_name !== 'string') return console.warn('event_name must be of type: string');
 
@@ -142,7 +144,7 @@ var ___lilbird = {
             else console.warn('No event object returned from BODY_TRANSFORMATION');
         }
 
-        if (this.configuration.DEBUG) console.log('TinyBird Event:', event_name, body);
+        if (_debug) console.log('TinyBird Event:', event_name, body);
 
         try {
             fetch(`${ this.configuration.BASE_URL || 'https://api.tinybird.co/v0/events' }?name=${ event_name }`, {
@@ -150,11 +152,11 @@ var ___lilbird = {
                 body: JSON.stringify(body),
                 headers: { Authorization: 'Bearer ' + this.configuration.WRITE_KEY }
             })
-                .then(function (res) { return res.json() }).then(function (data) { if (this.configuration.DEBUG) console.log('Tinybird Event response', data) })
-                .catch(function (e) { if (this.configuration.DEBUG) console.log(e) });
+                .then(function (res) { return res.json() }).then(function (data) { if (_debug) console.log('Tinybird Event response', data) })
+                .catch(function (e) { if (_debug) console.log(e) });
 
         } catch(e) {
-            if (this.configuration.DEBUG) console.log('Failed to fetch');
+            if (_debug) console.log('Failed to fetch');
         }
     },
     identify: function (uid, data) {
