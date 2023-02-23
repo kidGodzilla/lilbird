@@ -1,6 +1,6 @@
 {
   "name": "lilbird",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "A TinyBird Event API helper library",
   "main": "index.js",
   "scripts": {

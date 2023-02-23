@@ -156,7 +156,7 @@ var ___lilbird = {
                 .catch(e => { if (this.configuration.DEBUG) console.log(e) });
 
         } catch(e) {
-            console.log('Failed to fetch');
+            if (this.configuration.DEBUG) console.log('Failed to fetch');
         }
     },
     identify: function (uid, data) {
