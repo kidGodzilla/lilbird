@@ -1,7 +1,60 @@
 /***
  * A TinyBird Helper Library to send analytics events
  */
+
+/**
+ * Object.assign() polyfill
+ */
+// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+if (typeof Object.assign !== 'function') {
+    // Must be writable: true, enumerable: false, configurable: true
+    Object.defineProperty(Object, "assign", {
+        value: function assign(target, varArgs) { // .length of function is 2
+            'use strict';
+            if (target == null) { // TypeError if undefined or null
+                throw new TypeError('Cannot convert undefined or null to object');
+            }
+
+            var to = Object(target);
+
+            for (var index = 1; index < arguments.length; index++) {
+                var nextSource = arguments[index];
+
+                if (nextSource != null) { // Skip over if undefined or null
+                    for (var nextKey in nextSource) {
+                        // Avoid bugs when hasOwnProperty is shadowed
+                        if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                            to[nextKey] = nextSource[nextKey];
+                        }
+                    }
+                }
+            }
+            return to;
+        },
+        writable: true,
+        configurable: true
+    });
+}
+
+function __legacy_generateUUID() {
+    var d = new Date().getTime();
+    var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16;
+        if (d > 0) {
+            r = (d + r)%16 | 0;
+            d = Math.floor(d/16);
+        } else {
+            r = (d2 + r)%16 | 0;
+            d2 = Math.floor(d2/16);
+        }
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+}
+
 function ___uuidv4() {
+    if (!window.crypto) return __legacy_generateUUID();
+
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
         (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
@@ -93,14 +146,18 @@ var ___lilbird = {
 
         if (this.configuration.DEBUG) console.log('TinyBird Event:', event_name, body);
 
-        fetch(`${ this.configuration.BASE_URL || 'https://api.tinybird.co/v0/events' }?name=${ event_name }`, {
+        try {
+            fetch(`${ this.configuration.BASE_URL || 'https://api.tinybird.co/v0/events' }?name=${ event_name }`, {
                 method: 'POST',
                 body: JSON.stringify(body),
                 headers: { Authorization: 'Bearer ' + this.configuration.WRITE_KEY }
-            }
-        )
-            .then(res => res.json()).then(data => { if (this.configuration.DEBUG) console.log('Tinybird Event response', data) })
-            .catch(e => { if (this.configuration.DEBUG) console.log(e) });
+            })
+                .then(res => res.json()).then(data => { if (this.configuration.DEBUG) console.log('Tinybird Event response', data) })
+                .catch(e => { if (this.configuration.DEBUG) console.log(e) });
+
+        } catch(e) {
+            console.log('Failed to fetch');
+        }
     },
     identify: function (uid, data) {
         if (typeof data === 'object') {
