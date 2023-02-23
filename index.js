@@ -7,11 +7,10 @@
  */
 // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
 if (typeof Object.assign !== 'function') {
-    // Must be writable: true, enumerable: false, configurable: true
-    Object.defineProperty(Object, "assign", {
-        value: function assign(target, varArgs) { // .length of function is 2
+    Object.defineProperty(Object, 'assign', {
+        value: function assign(target, varArgs) {
             'use strict';
-            if (target == null) { // TypeError if undefined or null
+            if (target == null) {
                 throw new TypeError('Cannot convert undefined or null to object');
             }
 
@@ -20,9 +19,8 @@ if (typeof Object.assign !== 'function') {
             for (var index = 1; index < arguments.length; index++) {
                 var nextSource = arguments[index];
 
-                if (nextSource != null) { // Skip over if undefined or null
+                if (nextSource != null) {
                     for (var nextKey in nextSource) {
-                        // Avoid bugs when hasOwnProperty is shadowed
                         if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
                             to[nextKey] = nextSource[nextKey];
                         }
@@ -37,25 +35,17 @@ if (typeof Object.assign !== 'function') {
 }
 
 function __legacy_generateUUID() {
-    var d = new Date().getTime();
-    var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16;
-        if (d > 0) {
-            r = (d + r)%16 | 0;
-            d = Math.floor(d/16);
-        } else {
-            r = (d2 + r)%16 | 0;
-            d2 = Math.floor(d2/16);
-        }
-        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[x]/g, function (c) {
+        var r = Math.floor(Math.random() * 16);
+        return r.toString(16);
     });
 }
 
 function ___uuidv4() {
-    if (!window.crypto || !window.crypto.getRandomValues) return __legacy_generateUUID();
+    // if (!window.crypto || !window.crypto.getRandomValues)
+        return __legacy_generateUUID();
 
-    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function (c) { return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16) });
+    // return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function (c) { return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16) });
 }
 
 // Anonymously tracks a device across sessions
@@ -115,7 +105,7 @@ var ___lilbird = {
         // Checks
         if (typeof event_name !== 'string') return console.warn('event_name must be of type: string');
 
-        event_name = event_name.trim();
+        try { event_name = event_name.trim(); } catch(e){}
 
         if (!event_name) return console.warn('event_name is required by track function');
 
@@ -147,7 +137,7 @@ var ___lilbird = {
         if (_debug) console.log('TinyBird Event:', event_name, body);
 
         try {
-            fetch(`${ this.configuration.BASE_URL || 'https://api.tinybird.co/v0/events' }?name=${ event_name }`, {
+            fetch((this.configuration.BASE_URL || 'https://api.tinybird.co/v0/events') + '?name=' + event_name, {
                 method: 'POST',
                 body: JSON.stringify(body),
                 headers: { Authorization: 'Bearer ' + this.configuration.WRITE_KEY }
