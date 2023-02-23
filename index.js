@@ -55,9 +55,7 @@ function __legacy_generateUUID() {
 function ___uuidv4() {
     if (!window.crypto || !window.crypto.getRandomValues) return __legacy_generateUUID();
 
-    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    );
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function (c) { return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16) });
 }
 
 // Anonymously tracks a device across sessions
@@ -152,8 +150,8 @@ var ___lilbird = {
                 body: JSON.stringify(body),
                 headers: { Authorization: 'Bearer ' + this.configuration.WRITE_KEY }
             })
-                .then(res => res.json()).then(data => { if (this.configuration.DEBUG) console.log('Tinybird Event response', data) })
-                .catch(e => { if (this.configuration.DEBUG) console.log(e) });
+                .then(function (res) { return res.json() }).then(function (data) { if (this.configuration.DEBUG) console.log('Tinybird Event response', data) })
+                .catch(function (e) { if (this.configuration.DEBUG) console.log(e) });
 
         } catch(e) {
             if (this.configuration.DEBUG) console.log('Failed to fetch');
