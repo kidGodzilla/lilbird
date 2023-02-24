@@ -110,6 +110,31 @@ You can also track an event without a payload.
 LILBIRD.track('login');
 ```
 
+## Default Values
+
+TinyBird enforces strict checks on each ingested row, and quarantines any row with a missing column. Therefore, it's a good idea to provide default values for every column that isn't nullable.
+
+Keep in mind, sometimes rejected data is what you really want. Instead of allowing TinyBird to ingest bad data (like in our example below, login events without a username), you may want to skip defaults, and allow the invalid rows to be rejected. Otherwise, you're going to be writing SQL later to filter out the invalid data.
+
+Here's an example of how you can set defaults with the `DEFAULTS` configuration namespace:
+
+```js
+LILBIRD.init({
+   WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY',
+   DEFAULTS: {
+      "*": {
+         "created_at": 0
+      },
+      "login": {
+         "username": "-"
+      }
+   }
+});
+```
+
+In this example, if we sent a `login` event with no body, it would get a default value for both `created_at` and `username`, preventing any related insertion errors.
+
+
 ## Body Transformation
 
 TinyBird has strict type checking and enforcement, so you may need to do data transformation on events before they're sent, to prevent validation errors.

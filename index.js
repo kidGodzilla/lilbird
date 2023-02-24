@@ -127,7 +127,22 @@ var ___lilbird = {
             if (typeof body[k] === 'number') body[k] = (body[k]).toString();
         }
 
-        // User-defined body transformation (temporary)
+        // Use DEFAULTS to perform a transformation on the body of the event
+        // Enforces default values to avoid TinyBird errors
+        if (this.configuration.DEFAULTS && typeof this.configuration.DEFAULTS === 'object') {
+            var DEFAULTS = this.configuration.DEFAULTS;
+            var global_defaults = DEFAULTS['*'] || {};
+            var event_defaults = DEFAULTS[event_name] || {};
+            var defaults_for_this_event = Object.assign(global_defaults, event_defaults);
+
+            for (var key in defaults_for_this_event) {
+                if (key && defaults_for_this_event.hasOwnProperty(key) && body[key] === undefined) {
+                    body[key] = defaults_for_this_event[key];
+                }
+            }
+        }
+
+        // User-defined body transformation
         if (this.configuration.BODY_TRANSFORMATION && typeof this.configuration.BODY_TRANSFORMATION === 'function') {
             var body_transformed = this.configuration.BODY_TRANSFORMATION(body, event_name);
             if (body_transformed && typeof body_transformed === 'object') body = body_transformed;
