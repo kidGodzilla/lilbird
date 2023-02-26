@@ -45,6 +45,9 @@ function ___uuidv4() {
     // if (!window.crypto || !window.crypto.getRandomValues)
         return __legacy_generateUUID();
 
+    // Todo: ES3-safe implementation (feature detection for crypto.getRandomValues is insufficient, bitwise operators may lack support on older mobile browsers)
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_OR
+
     // return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function (c) { return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16) });
 }
 
@@ -90,7 +93,11 @@ function ___getSessionID() {
 
 var ___lilbird = {
     user: {},
-    configuration: {},
+    configuration: {
+        ADD_TS: true,
+        ADD_SESSION_ID: true,
+        ADD_ANONYMOUS_DEVICE_ID: true,
+    },
     config: function (conf) {
         this.configuration = Object.assign(this.configuration, conf);
         if (this.configuration.DEBUG) console.log('Tinybird Configuration:', this.configuration);
@@ -119,7 +126,11 @@ var ___lilbird = {
         if (!this.configuration.WRITE_KEY) console.warn('WRITE_KEY must be set via window.TINYBIRD_CONFIGURATION or init({ WRITE_KEY })');
 
         // Overwrite chain for properties to be sent to ClickHouse
-        body = Object.assign({ ts: new Date().toISOString(), anonymous_device_id: ___getUID(), session_id: ___getSessionID() }, this.user, body);
+        var base_object = {};
+        if (this.configuration.ADD_TS) base_object.ts = new Date().toISOString();
+        if (this.configuration.ADD_SESSION_ID) base_object.session_id = ___getSessionID();
+        if (this.configuration.ADD_ANONYMOUS_DEVICE_ID) base_object.anonymous_device_id = ___getUID();
+        body = Object.assign(base_object, this.user, body);
 
         // Normalize all types in body for Tinybird type safety
         // All numbers should become strings
@@ -194,11 +205,11 @@ try {
                 enabled: true,
                 test: function () { return !!window.Lilbird },
                 track: function (eventName, eventProperties) {
-                    console.log('tracking', eventName, eventProperties);
+                    // if (window.__debug) console.log('tracking', eventName, eventProperties);
                     Lilbird.track(eventName, eventProperties);
                 },
                 identify: function (userId, userProperties) {
-                    console.log('identifying', userId, userProperties);
+                    // if (window.__debug) console.log('identifying', userId, userProperties);
                     Lilbird.identify(userId, userProperties);
                 },
             });

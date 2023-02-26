@@ -46,7 +46,7 @@ Lilbird.init({ WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY' });
 
 ## Usage
 
-### Things that happen automatically
+### Event properties that are added automatically, if not defined
 
 1. A timestamp is appended to each event under the namespace `ts`
    1. This is formatted as an ISOString ([ISO 8601](https://en.wikipedia.org/wiki/ISO_8601))
@@ -54,7 +54,18 @@ Lilbird.init({ WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY' });
 3. An anonymous device identifier is appended to each event under the namespace `anonymous_device_id`
    1. If your requirements are minimal, you can use this as your unique user identifier. Otherwise, send a `uid` or `uuid` to whatever namespace you like, and use this as your fallback identifier for anonymous users.
 
+### Disabling Automatic Event Properties
 
+Each of these can be disabled by sending the appropriate configuration:
+
+```js
+Lilbird.init({ 
+   WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY',
+   ADD_ANONYMOUS_DEVICE_ID: false,
+   ADD_SESSION_ID: false,
+   ADD_TS: false,
+});
+```
 
 ### Identifying users (Optional)
 
