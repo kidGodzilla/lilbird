@@ -11,7 +11,7 @@ if (typeof Object.assign !== 'function') {
         value: function assign(target, varArgs) {
             'use strict';
             if (target == null) {
-                throw new TypeError('Cannot convert undefined or null to object');
+                throw new TypeError('Cannot convert undefined or null to object (Object.assign polyfill, Lilbird.js)');
             }
 
             var to = Object(target);
@@ -42,13 +42,17 @@ function __legacy_generateUUID() {
 }
 
 function ___uuidv4() {
-    // if (!window.crypto || !window.crypto.getRandomValues)
+    if (!window.crypto || !window.crypto.getRandomValues) {
         return __legacy_generateUUID();
+    }
 
-    // Todo: ES3-safe implementation (feature detection for crypto.getRandomValues is insufficient, bitwise operators may lack support on older mobile browsers)
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_OR
-
-    // return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function (c) { return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16) });
+    try {
+        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, function (c) {
+            return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+        });
+    } catch(e) {
+        return __legacy_generateUUID();
+    }
 }
 
 // Anonymously tracks a device across sessions
@@ -64,7 +68,7 @@ function ___getUID() {
                     localStorage.setItem('__lilbird_uuid', window.__lilbird_uuid);
                 }
                 if (window.__lilbird_uuid) return window.__lilbird_uuid;
-            } catch(e) { console.warn('Error accessing local storage.') }
+            } catch(e) { console.warn('Error accessing local storage. (Lilbird.js)') }
         }
     }
 
@@ -84,7 +88,7 @@ function ___getSessionID() {
                     sessionStorage.setItem('__lilbird_session_id', window.__lilbird_session_id);
                 }
                 if (window.__lilbird_session_id) return window.__lilbird_session_id;
-            } catch(e) { console.warn('Error accessing session storage.') }
+            } catch(e) { console.warn('Error accessing session storage. (Lilbird.js)') }
         }
     }
 
@@ -100,11 +104,11 @@ var ___lilbird = {
     },
     config: function (conf) {
         this.configuration = Object.assign(this.configuration, conf);
-        if (this.configuration.DEBUG) console.log('Tinybird Configuration:', this.configuration);
+        if (this.configuration.DEBUG) console.log('Tinybird Configuration (Lilbird.js):', this.configuration);
     },
     init: function (conf) {
         this.configuration = Object.assign(this.configuration, conf);
-        if (this.configuration.DEBUG) console.log('Tinybird Configuration:', this.configuration);
+        if (this.configuration.DEBUG) console.log('Tinybird Configuration (Lilbird.js):', this.configuration);
     },
     track: function (event_name, body) {
         var _debug = this.configuration.DEBUG;
@@ -114,16 +118,16 @@ var ___lilbird = {
 
         try { event_name = event_name.trim(); } catch(e){}
 
-        if (!event_name) return console.warn('event_name is required by track function');
+        if (!event_name) return console.warn('event_name is required by track function (Lilbird.js)');
 
-        if (!/^[A-Za-z0-9_-]*$/gi.test(event_name)) console.warn('event_name can only contain letters, numbers, -, and _');
+        if (!/^[A-Za-z0-9_-]*$/gi.test(event_name)) console.warn('event_name can only contain letters, numbers, -, and _ (Lilbird.js)');
 
         // Configuration attached to window globals
         if (window && typeof window === 'object' && window.document && window.TINYBIRD_CONFIGURATION) {
             this.configuration = Object.assign(this.configuration, window.TINYBIRD_CONFIGURATION);
         }
 
-        if (!this.configuration.WRITE_KEY) console.warn('WRITE_KEY must be set via window.TINYBIRD_CONFIGURATION or init({ WRITE_KEY })');
+        if (!this.configuration.WRITE_KEY) console.warn('WRITE_KEY must be set via window.TINYBIRD_CONFIGURATION or init({ WRITE_KEY }) (Lilbird.js)');
 
         // Overwrite chain for properties to be sent to ClickHouse
         var base_object = {};
@@ -160,7 +164,7 @@ var ___lilbird = {
             else console.warn('No event object returned from BODY_TRANSFORMATION');
         }
 
-        if (_debug) console.log('Tinybird Event:', event_name, body);
+        if (_debug) console.log('Tinybird Event (Lilbird.js):', event_name, body);
 
         try {
             fetch((this.configuration.BASE_URL || 'https://api.tinybird.co/v0/events') + '?name=' + event_name, {
@@ -168,11 +172,11 @@ var ___lilbird = {
                 body: JSON.stringify(body),
                 headers: { Authorization: 'Bearer ' + this.configuration.WRITE_KEY }
             })
-                .then(function (res) { return res.json() }).then(function (data) { if (_debug) console.log('Tinybird Event response', data) })
+                .then(function (res) { return res.json() }).then(function (data) { if (_debug) console.log('Tinybird Event response (Lilbird.js)', data) })
                 .catch(function (e) { if (_debug) console.log(e) });
 
         } catch(e) {
-            if (_debug) console.log('Failed to fetch');
+            if (_debug) console.log('Failed to fetch (Lilbird.js)');
         }
     },
     identify: function (uid, data) {
@@ -181,18 +185,18 @@ var ___lilbird = {
                 this.user = Object.assign(data, this.user);
                 this.user.uid = uid;
             } catch(e) {
-                console.warn('Error calling identify function. Possible type mismatch.');
+                console.warn('Error calling identify function. Possible type mismatch. (Lilbird.js)');
             }
         } else if (typeof uid === 'object' && !data) {
             // identify({}) convenience method
             try {
                 this.user = Object.assign(uid, this.user);
             } catch(e) {
-                console.warn('Error calling identify function. Possible type mismatch.');
+                console.warn('Error calling identify function. Possible type mismatch. (Lilbird.js)');
             }
         }
 
-        if (this.configuration.DEBUG) console.log('Tinybird Identify:', data || uid, this.user);
+        if (this.configuration.DEBUG) console.log('Tinybird Identify (Lilbird.js):', data || uid, this.user);
     },
 };
 

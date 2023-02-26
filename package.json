@@ -1,6 +1,6 @@
 {
   "name": "lilbird",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "description": "A Tinybird Event API helper library in the style of Analytics.js",
   "types": "index.d.ts",
   "main": "index.js",
