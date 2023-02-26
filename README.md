@@ -1,11 +1,11 @@
 # LilBird
-TinyBird Event API helper library. 
+Tinybird Event API helper library. 
 
-Adds routine Analytics.js style tracking to TinyBird with as little setup as possible.
+Adds routine Analytics.js style tracking to Tinybird with as little setup as possible.
 
 ![Lilbird](bird.png?raw=true "Lilbird, stable diffusion")
 
-## TinyBird Signup & Setup
+## Tinybird Signup & Setup
 
 1. Head to https://www.tinybird.co/
 2. Create a new account
@@ -13,11 +13,11 @@ Adds routine Analytics.js style tracking to TinyBird with as little setup as pos
 4. Create a new **Auth Token**. This is your `WRITE_KEY`.
    1. You should only select: `DATA SOURCES SCOPES`
       1. Create new Data Sources or append data to existing ones **(ENABLED)**
-   2. This will allow your key to be used to send events to TinyBird, create Data Sources (tables) on the fly, and not much else.
+   2. This will allow your key to be used to send events to Tinybird, create Data Sources (tables) on the fly, and not much else.
 
-You should create a write-only key for your TinyBird instance. They'll give you a key with lots of permissions when you sign up. For security reasons, don't use this one.
+You should create a write-only key for your Tinybird instance. They'll give you a key with lots of permissions when you sign up. For security reasons, don't use this one.
 
-![Create a TinyBird Write Key](write-key.png?raw=true "Create a TinyBird Write Key")
+![Create a Tinybird Write Key](write-key.png?raw=true "Create a Tinybird Write Key")
 
 ## Setup
 
@@ -28,7 +28,7 @@ You should create a write-only key for your TinyBird instance. They'll give you 
 <script src="https://cdn.jsdelivr.net/npm/lilbird@latest"></script>
 ```
 
-You should create a write-only key for your TinyBird instance. See instructions above.
+You should create a write-only key for your Tinybird instance. See instructions above.
 
 ### NPM
 
@@ -39,9 +39,9 @@ npm i -s lilbird
 Then, in your project:
 
 ```js
-import * as LILBIRD from 'lilbird';
+import * as Lilbird from 'lilbird';
 
-LILBIRD.init({ WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY' });
+Lilbird.init({ WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY' });
 ```
 
 ## Usage
@@ -65,7 +65,7 @@ Example:
 ```js
 var uid = '123456';
 
-LILBIRD.identify(uid, {
+Lilbird.identify(uid, {
    user: true,
    age: 32,
    admin: false,
@@ -77,7 +77,7 @@ LILBIRD.identify(uid, {
 UID is optional. You can omit it, or even include it in the body:
 
 ```js
-LILBIRD.identify({
+Lilbird.identify({
    user: true,
    age: 32,
    admin: false,
@@ -88,7 +88,7 @@ LILBIRD.identify({
 
 ## Tracking Events
 
-Events are tracked using the `track()` method. This tracks an event by adding a row to a Data Source in TinyBird.
+Events are tracked using the `track()` method. This tracks an event by adding a row to a Data Source in Tinybird.
 
 Event names can be letters, numbers, dashes, underscores, but no spaces or special characters.
 
@@ -97,7 +97,7 @@ Example:
 ```js
 var event_name = 'signed_up';
 
-LILBIRD.track(event_name, {
+Lilbird.track(event_name, {
    username: 'bob'
 });
 ```
@@ -107,19 +107,19 @@ The payload is optional, and describes the event you are tracking. Be aware, nam
 You can also track an event without a payload.
 
 ```js
-LILBIRD.track('login');
+Lilbird.track('login');
 ```
 
 ## Default Values
 
-TinyBird enforces strict checks on each ingested row, and quarantines any row with a missing column. Therefore, it's a good idea to provide default values for every column that isn't nullable.
+Tinybird enforces strict checks on each ingested row, and quarantines any row with a missing column. Therefore, it's a good idea to provide default values for every column that isn't nullable.
 
-Keep in mind, sometimes rejected data is what you really want. Instead of allowing TinyBird to ingest bad data (like in our example below, login events without a username), you may want to skip defaults, and allow the invalid rows to be rejected. Otherwise, you're going to be writing SQL later to filter out the invalid data.
+Keep in mind, sometimes rejected data is what you really want. Instead of allowing Tinybird to ingest bad data (like in our example below, login events without a username), you may want to skip defaults, and allow the invalid rows to be rejected. Otherwise, you're going to be writing SQL later to filter out the invalid data.
 
 Here's an example of how you can set defaults with the `DEFAULTS` configuration namespace:
 
 ```js
-LILBIRD.init({
+Lilbird.init({
    WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY',
    DEFAULTS: {
       "*": {
@@ -137,16 +137,16 @@ In this example, if we sent a `login` event with no body, it would get a default
 
 ## Body Transformation
 
-TinyBird has strict type checking and enforcement, so you may need to do data transformation on events before they're sent, to prevent validation errors.
+Tinybird has strict type checking and enforcement, so you may need to do data transformation on events before they're sent, to prevent validation errors.
 
-You can do that with a `BODY_TRANSFORMATION` function, which modifies the body before TinyBird ingestion.
+You can do that with a `BODY_TRANSFORMATION` function, which modifies the body before Tinybird ingestion.
 
 **Note:** this is a synchronous function, which must return the body once it is modified.
 
 **Example:** 
 
 ```js
-LILBIRD.init({
+Lilbird.init({
    WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY',
    BODY_TRANSFORMATION: function(body, event_name) {
        if (event_name === 'pageview') {

@@ -1,5 +1,5 @@
 /***
- * A TinyBird Helper Library to send analytics events
+ * A Tinybird Helper Library to send analytics events
  */
 
 /**
@@ -93,11 +93,11 @@ var ___lilbird = {
     configuration: {},
     config: function (conf) {
         this.configuration = Object.assign(this.configuration, conf);
-        if (this.configuration.DEBUG) console.log('TinyBird Configuration:', this.configuration);
+        if (this.configuration.DEBUG) console.log('Tinybird Configuration:', this.configuration);
     },
     init: function (conf) {
         this.configuration = Object.assign(this.configuration, conf);
-        if (this.configuration.DEBUG) console.log('TinyBird Configuration:', this.configuration);
+        if (this.configuration.DEBUG) console.log('Tinybird Configuration:', this.configuration);
     },
     track: function (event_name, body) {
         var _debug = this.configuration.DEBUG;
@@ -121,14 +121,14 @@ var ___lilbird = {
         // Overwrite chain for properties to be sent to ClickHouse
         body = Object.assign({ ts: new Date().toISOString(), anonymous_device_id: ___getUID(), session_id: ___getSessionID() }, this.user, body);
 
-        // Normalize all types in body for TinyBird type safety
+        // Normalize all types in body for Tinybird type safety
         // All numbers should become strings
         for (var k in body) {
             if (typeof body[k] === 'number') body[k] = (body[k]).toString();
         }
 
         // Use DEFAULTS to perform a transformation on the body of the event
-        // Enforces default values to avoid TinyBird errors
+        // Enforces default values to avoid Tinybird errors
         if (this.configuration.DEFAULTS && typeof this.configuration.DEFAULTS === 'object') {
             var DEFAULTS = this.configuration.DEFAULTS;
             var global_defaults = DEFAULTS['*'] || {};
@@ -149,7 +149,7 @@ var ___lilbird = {
             else console.warn('No event object returned from BODY_TRANSFORMATION');
         }
 
-        if (_debug) console.log('TinyBird Event:', event_name, body);
+        if (_debug) console.log('Tinybird Event:', event_name, body);
 
         try {
             fetch((this.configuration.BASE_URL || 'https://api.tinybird.co/v0/events') + '?name=' + event_name, {
@@ -181,25 +181,25 @@ var ___lilbird = {
             }
         }
 
-        if (this.configuration.DEBUG) console.log('TinyBird Identify:', data || uid, this.user);
+        if (this.configuration.DEBUG) console.log('Tinybird Identify:', data || uid, this.user);
     },
 };
 
 try {
     if (window && typeof window === 'object' && window.document) {
-        window.LILBIRD = ___lilbird;
+        window.Lilbird = window.LILBIRD = ___lilbird;
 
         if (window.Analytics && typeof Analytics === 'function' && Analytics.track && Analytics.identify) {
             Analytics.addAdapter('lilbird', {
                 enabled: true,
-                test: function () { return !!window.LILBIRD },
+                test: function () { return !!window.Lilbird },
                 track: function (eventName, eventProperties) {
                     console.log('tracking', eventName, eventProperties);
-                    LILBIRD.track(eventName, eventProperties);
+                    Lilbird.track(eventName, eventProperties);
                 },
                 identify: function (userId, userProperties) {
                     console.log('identifying', userId, userProperties);
-                    LILBIRD.identify(userId, userProperties);
+                    Lilbird.identify(userId, userProperties);
                 },
             });
         }
