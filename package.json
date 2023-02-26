@@ -1,7 +1,8 @@
 {
   "name": "lilbird",
-  "version": "0.2.16",
-  "description": "A TinyBird Event API helper library",
+  "version": "0.2.17",
+  "description": "A Tinybird Event API helper library in the style of Analytics.js",
+  "types": "index.d.ts",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,8 +12,10 @@
     "url": "git+https://github.com/kidGodzilla/lilbird.git"
   },
   "keywords": [
-    "TinyBird",
-    "analytics"
+    "Tinybird",
+    "analytics",
+    "analytics.js",
+    "events"
   ],
   "author": "James Futhey (https://www.jamesfuthey.com/)",
   "license": "ISC",
