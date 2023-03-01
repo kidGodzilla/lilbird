@@ -138,8 +138,10 @@ var ___lilbird = {
 
         // Normalize all types in body for Tinybird type safety
         // All numbers should become strings
-        for (var k in body) {
-            if (typeof body[k] === 'number') body[k] = (body[k]).toString();
+        if (this.configuration.TRANSFORM_NUMBERS_TO_STRINGS) {
+            for (var k in body) {
+                if (typeof body[k] === 'number') body[k] = (body[k]).toString();
+            }
         }
 
         // Use DEFAULTS to perform a transformation on the body of the event
@@ -162,6 +164,25 @@ var ___lilbird = {
             var body_transformed = this.configuration.BODY_TRANSFORMATION(body, event_name);
             if (body_transformed && typeof body_transformed === 'object') body = body_transformed;
             else console.warn('No event object returned from BODY_TRANSFORMATION');
+        }
+
+        // Enforce Types - string, integer, float, boolean
+        if (this.configuration.ENFORCE_TYPES && typeof this.configuration.ENFORCE_TYPES === 'object') {
+            var TYPES = this.configuration.ENFORCE_TYPES;
+            var global_types = TYPES['*'] || {};
+            var event_types = TYPES[event_name] || {};
+            var types_for_this_event = Object.assign(global_types, event_types);
+
+            for (var key in types_for_this_event) {
+                if (key && types_for_this_event.hasOwnProperty(key) && body[key]) {
+                    var type = types_for_this_event[key];
+
+                    if (type === 'float') body[key] = parseFloat(body[key]);
+                    if (type === 'integer') body[key] = parseInt(body[key]);
+                    if (type === 'boolean') body[key] = !!body[key];
+                    if (type === 'string') body[key] = ''+body[key];
+                }
+            }
         }
 
         if (_debug) console.log('Tinybird Event (Lilbird.js):', event_name, body);

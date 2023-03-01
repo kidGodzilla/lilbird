@@ -46,6 +46,16 @@ Lilbird.init({ WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY' });
 
 ## Usage
 
+Like most event analytics platforms, Lilbird exposes a `track()` and an `identify()` method. 
+
+**Identify** is used to set properties on your current user, which describes the user. For example, you could identify whether the user is a paying customer, or on a free trial, with `identify({ trial: false })`
+
+**Track** sends an event to Tinybird, which includes every property identified for this user. For example, you could `track('new_project_created')` to later visualize the number of new projects created over time.
+
+If you wanted to track new projects created by type, you could send that like this; `track('new_project_created', { type: 'IT' '})`. 
+
+It is recommended that you enforce types and set a default value for every column (user or event property) you send to Tinybird. See "Enforce Types" and "Default Values" below.
+
 ### Event properties that are added automatically, if not defined
 
 1. A timestamp is appended to each event under the namespace `ts`
@@ -145,8 +155,39 @@ Lilbird.init({
 
 In this example, if we sent a `login` event with no body, it would get a default value for both `created_at` and `username`, preventing any related insertion errors.
 
+## Enforce Types
 
-## Body Transformation
+Tinybird enforces strict type checks on each ingested row, and rows with any column that doesn't match your schema will be quarantined and permanently rejected.
+
+So, you can enforce types for your incoming data, via configuration, to prevent this from occurring.
+
+Available types are:
+- boolean
+- integer
+- string
+- float
+
+Here's an example:
+
+```js
+Lilbird.init({
+   WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY',
+   ENFORCE_TYPES: {
+      "*": {
+         "created_at": 'integer'
+      },
+      "login": {
+         "username": "string",
+         "company": "string",
+         "age": "integer",
+         "is_registered": "boolean",
+         "pixel_ratio": "float"
+      }
+   }
+});
+```
+
+## Custom Body Transformation (Advanced)
 
 Tinybird has strict type checking and enforcement, so you may need to do data transformation on events before they're sent, to prevent validation errors.
 
@@ -167,5 +208,16 @@ Lilbird.init({
        
        return body;
    }
+});
+```
+
+## Transform all numbers to strings
+
+The configuration option `TRANSFORM_NUMBERS_TO_STRINGS` transforms all properties which are numbers into strings.
+
+```js
+Lilbird.init({
+   WRITE_KEY: 'p.YOURTINYBIRDWRITEKEY',
+   TRANSFORM_NUMBERS_TO_STRINGS: true
 });
 ```
