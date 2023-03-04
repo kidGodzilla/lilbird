@@ -101,6 +101,8 @@ var ___lilbird = {
         ADD_TS: true,
         ADD_SESSION_ID: true,
         ADD_ANONYMOUS_DEVICE_ID: true,
+        RESPECT_DO_NOT_TRACK: true,
+        DO_NOT_TRACK: !!navigator.doNotTrack
     },
     config: function (conf) {
         this.configuration = Object.assign(this.configuration, conf);
@@ -184,6 +186,8 @@ var ___lilbird = {
                 }
             }
         }
+
+        if (this.configuration.RESPECT_DO_NOT_TRACK && this.configuration.DO_NOT_TRACK) return;
 
         if (_debug) console.log('Tinybird Event (Lilbird.js):', event_name, body);
 
