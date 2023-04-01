@@ -2,36 +2,27 @@
  * A Tinybird Helper Library to send analytics events
  */
 
-/**
- * Object.assign() polyfill
- */
-// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
 if (typeof Object.assign !== 'function') {
-    Object.defineProperty(Object, 'assign', {
-        value: function assign(target, varArgs) {
-            'use strict';
-            if (target == null) {
-                throw new TypeError('Cannot convert undefined or null to object (Object.assign polyfill, Lilbird.js)');
-            }
+  Object.assign = function (target, ...sources) {
+    'use strict';
+    if (target == null) {
+      throw new TypeError('Cannot convert undefined or null to object (Object.assign polyfill)');
+    }
 
-            var to = Object(target);
+    const to = Object(target);
 
-            for (var index = 1; index < arguments.length; index++) {
-                var nextSource = arguments[index];
-
-                if (nextSource != null) {
-                    for (var nextKey in nextSource) {
-                        if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-                            to[nextKey] = nextSource[nextKey];
-                        }
-                    }
-                }
-            }
-            return to;
-        },
-        writable: true,
-        configurable: true
+    sources.forEach((source) => {
+      if (source != null) {
+        for (const key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            to[key] = source[key];
+          }
+        }
+      }
     });
+
+    return to;
+  };
 }
 
 function __legacy_generateUUID() {
